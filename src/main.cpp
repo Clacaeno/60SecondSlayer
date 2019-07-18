@@ -108,7 +108,7 @@ class MainMenu : public GameState
     ss4->GetTransform()->SetPosition(charPosX,charPosY);
     ss6->GetTransform()->SetPosition(enPosX,enPosY);
     ss7->GetTransform()->SetPosition(offScrX,offScrY);
-    if(Aspen::Input::KeyHeld(SDLK_SPACE))
+    if(Aspen::Input::KeyPressed(SDLK_a))
     {
       ss4->GetTransform()->SetPosition(offScrX,offScrY);
       ss5->GetTransform()->SetPosition(charPosX,charPosY);
