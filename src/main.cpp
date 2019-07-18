@@ -8,6 +8,7 @@
 #include "Log.hpp"
 #include "Audio.hpp"
 #include "Input.hpp"
+#include "Debug.hpp"
 #include "GameState.hpp"
 #include <iostream>
 
