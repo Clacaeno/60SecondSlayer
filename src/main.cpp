@@ -48,8 +48,7 @@ class MainMenu : public GameState
   public:
   MainMenu(Object *parent = nullptr, std::string name = "Mainmenu") : GameState(parent, name)
   { 
-
-
+    Aspen::Log::Debug("Started making main menu");
 
     //  Aspen::Graphics::UniformSpritesheet *ss2 = new Aspen::Graphics::UniformSpritesheet("./resources/Colosseum.png", 1885, 1414, 1, nullptr, "ColosseumSS");
     //  sprite = new Aspen::Graphics::Animation(ss2, 1.0f / 12.0f, this, "Colosseum");
