@@ -12,7 +12,6 @@
 #include "GameState.hpp"
 #include <iostream>
 
-// Hello comment!
 
 using Aspen::Engine::Engine;
 using Aspen::GameState::GameState;
