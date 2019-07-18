@@ -79,7 +79,7 @@ class Player : public Object
     {
     RogueStab->Deactivate();
     RogueIdle->Activate();
-    if(Aspen::Input::KeyHeld(SDLK_SPACE))
+    if(Aspen::Input::KeyHeld(SDLK_a))
     {
       RogueIdle->Deactivate();
       RogueStab->Activate();
