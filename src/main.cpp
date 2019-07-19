@@ -23,20 +23,14 @@ void ChangeScene(Aspen::Graphics::UI::Button *button, std::string scene, GameSta
 {
   gsm->SetCurrentState(scene);
 }
-<<<<<<< Updated upstream
-    int pHp = 10;
-    int pMaxHP = 10;
-    int pSpeed = 2;
-    int pAttack = 4;
-    int pDefense = 0;
-    int pGold = 100000000;
 
     int mHp = 5;
     int mMaxHP = 5;
     int mSpeed = 1;
     int mAttack = 3;
     int mDefense = 0;
-=======
+    int Score = 0; 
+
     int eHp = 7;
     int eMaxHP = 7;
     int eSpeed = 2;
@@ -50,7 +44,7 @@ void ChangeScene(Aspen::Graphics::UI::Button *button, std::string scene, GameSta
     int pDefense = 2;
     int pRestoration = 2;
     int Gold = 0;
->>>>>>> Stashed changes
+
 
     float charPosX = 543.0f;
     float charPosY = 1684.0f;
@@ -64,7 +58,7 @@ void ChangeScene(Aspen::Graphics::UI::Button *button, std::string scene, GameSta
     float timerX = 474.0f;
     float timerY = 42.0f;
 
-    float timer = 60;
+    float timer = 60.00;
 
 class BackGround : public Object
 {
@@ -89,10 +83,6 @@ class BackGround : public Object
 };
 class Player : public Object
 {
-<<<<<<< Updated upstream
-    
-=======
->>>>>>> Stashed changes
   Aspen::Graphics::Animation *RogueIdle;
   Aspen::Graphics::Animation *RogueStab;
 
@@ -119,22 +109,14 @@ class Player : public Object
     {
       RogueIdle->Deactivate();
       RogueStab->Activate();
-<<<<<<< Updated upstream
       mHp -= (pAttack - mDefense);
       pHp -= (mAttack - pDefense);
-=======
       eHp -= pAttack - eDefense;
->>>>>>> Stashed changes
     }
     }
 };
 class Slop : public Object
 {
-<<<<<<< Updated upstream
-
-=======
-   
->>>>>>> Stashed changes
   Aspen::Graphics::Animation *SlopBounce;
   Aspen::Graphics::Animation *SlopHurt;
 
@@ -158,11 +140,7 @@ class Slop : public Object
   {
     SlopBounce->Activate();
     SlopHurt->Deactivate();
-<<<<<<< Updated upstream
-    if(Aspen::Input::KeyPressed(SDLK_SPACE))
-=======
     if(Aspen::Input::KeyPressed(SDLK_a))
->>>>>>> Stashed changes
     {
       SlopBounce->Deactivate();
       SlopHurt->Activate();
@@ -190,16 +168,20 @@ class StoreOwner : public Object
     {
       pAttack ++;
       Gold -= 3;
+      Score += 35;
     }
     if(Aspen::Input::KeyPressed(SDLK_s) && Gold >= 1)
     {
       pDefense++;
       Gold -= 1;
+      Score += 35;
+      
     }
     if(Aspen::Input::KeyPressed(SDLK_d) && Gold >= 3)
     {
       pRestoration++;
       Gold -= 2;
+      Score += 35;
     }
     }
 };
@@ -232,10 +214,46 @@ class MainMenu : public GameState
   {
     title->SetText(std::to_string(pHp) + " / " + std::to_string(pMaxHP));
     title2->SetText(std::to_string(mHp) + " / " + std::to_string(mMaxHP));
+
+    if (pHp < 1)
+    {
+      Aspen::Engine::Engine::Get()->FindChildOfType<Aspen::GameState::GameStateManager>()->SetCurrentState("Shop");
+    }
+    else if (mHp < 1)
+    {
+      Gold += 20;
+      Score += 100;
+      Aspen::Engine::Engine::Get()->FindChildOfType<Aspen::GameState::GameStateManager>()->SetCurrentState("Shop");
+    }
+    if (timer <= 0)
+    {
+
+    }
+
   }
 
 };
+class Shop : public GameState
+{   
+    double time;
+    
+  Aspen::Graphics::UI::Text *title;
+  Aspen::Graphics::UI::Text *title2;
+  Aspen::Graphics::Animation *sprite; 
 
+
+  public:
+  Shop(Object *parent = nullptr, std::string name = "Shop") : GameState(parent, name)
+  {
+
+  }
+
+  void OnUpdate()
+  {
+
+  }
+
+};
 
 
 class Game : public GameState
