@@ -254,6 +254,27 @@ class Shop : public GameState
   }
 
 };
+class Score1 : public GameState
+{   
+    
+  Aspen::Graphics::UI::Text *title;
+
+  public:
+  Score1(Object *parent = nullptr, std::string name = "Score1") : GameState(parent, name)
+  {
+    title = new Aspen::Graphics::UI::Text("WWWWWWWW", "default", 64, this, "Title");
+    title->GetTransform()->SetPosition(127,339);
+    AddChild(title);
+  }
+
+  void OnUpdate()
+  {
+    title->SetText(std::to_string(Score));
+
+
+  }
+
+};
 
 
 class Game : public GameState
