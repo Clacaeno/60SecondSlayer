@@ -23,12 +23,13 @@ void ChangeScene(Aspen::Graphics::UI::Button *button, std::string scene, GameSta
 {
   gsm->SetCurrentState(scene);
 }
-
+    int roundNum = 1;
+    int mKilled = 0;
     int mHp = 5;
     int mMaxHP = 5;
     int mSpeed = 1;
     int mAttack = 3;
-    int mDefense = 0;
+    int mDefense = 2;
     int Score = 0; 
 
     int eHp = 7;
@@ -75,10 +76,19 @@ class BackGround : public Object
     AddChild(BG);
     AddChild(timertext);
     }
+
+    void SetTimerText(std::string str)
+    {
+      timertext->SetText(str);
+    }
     void OnUpdate()
     {
       timer -= Aspen::Engine::Engine::Get()->FindChildOfType<Aspen::Time::Time>()->DeltaTime();
       timertext->SetText(std::to_string(int(std::ceil(timer))));
+      if (timer <= 0)
+      {
+        Aspen::Engine::Engine::Get()->End();
+      }
     }
 };
 class Player : public Object
@@ -111,7 +121,6 @@ class Player : public Object
       RogueStab->Activate();
       mHp -= (pAttack - mDefense);
       pHp -= (mAttack - pDefense);
-      eHp -= pAttack - eDefense;
     }
     }
 };
@@ -159,14 +168,17 @@ class StoreOwner : public Object
     {
     Shopkeep = new Aspen::Graphics::Animation(new Aspen::Graphics::UniformSpritesheet("./resources/ShopKeeper.png", 64, 64, 16, nullptr, "SlopBounce"));
     sprite = new Aspen::Graphics::Sprite("./resources/Rogue.png", nullptr, "RogueIdle");
+    //Shopkeep->GetTransform()->SetPosition(shopX, shopY);
     AddChild(sprite);
     AddChild(Shopkeep);
     }
+
+    
     void OnUpdate()
     {
     if(Aspen::Input::KeyPressed(SDLK_a) && Gold >= 2)
     {
-      pAttack ++;
+      pAttack++;
       Gold -= 3;
       Score += 35;
     }
@@ -183,6 +195,8 @@ class StoreOwner : public Object
       Gold -= 2;
       Score += 35;
     }
+
+    
     }
 };
 
@@ -193,14 +207,17 @@ class MainMenu : public GameState
   Aspen::Graphics::UI::Text *title;
   Aspen::Graphics::UI::Text *title2;
   Aspen::Graphics::Animation *sprite; 
+  BackGround *bg;
 
 
   public:
   MainMenu(Object *parent = nullptr, std::string name = "Mainmenu") : GameState(parent, name)
   {
-    CreateChild<BackGround>();
+    bg = new BackGround();
+    AddChild(bg);
     CreateChild<Player>();
     CreateChild<Slop>();
+
 
     title = new Aspen::Graphics::UI::Text("WWWWWWWW", "default", 64, this, "Title");
     title2 = new Aspen::Graphics::UI::Text("WWWWWWWW", "default", 64, this, "Title");
@@ -221,31 +238,36 @@ class MainMenu : public GameState
     }
     else if (mHp < 1)
     {
-      Gold += 20;
-      Score += 100;
-      Aspen::Engine::Engine::Get()->FindChildOfType<Aspen::GameState::GameStateManager>()->SetCurrentState("Shop");
+      mKilled++;
+      if (mKilled == 5 * roundNum)
+      {
+        Gold += 20;
+        Score += 100;
+        Aspen::Engine::Engine::Get()->FindChildOfType<Aspen::GameState::GameStateManager>()->SetCurrentState("Shop");
+      }
     }
-    if (timer <= 0)
-    {
-
-    }
-
   }
 
 };
 class Shop : public GameState
 {   
     double time;
-    
-  Aspen::Graphics::UI::Text *title;
-  Aspen::Graphics::UI::Text *title2;
+  Aspen::Graphics::UI::Text *AtkBuy;
+  Aspen::Graphics::UI::Text *DefBuy;
+  Aspen::Graphics::UI::Text *HpBuy;
   Aspen::Graphics::Animation *sprite; 
 
 
   public:
   Shop(Object *parent = nullptr, std::string name = "Shop") : GameState(parent, name)
   {
-
+    CreateChild<StoreOwner>();
+    AtkBuy = new Aspen::Graphics::UI::Text("+1 Attack! (A)", "default", 64, this, "atkbuy");
+    DefBuy = new Aspen::Graphics::UI::Text("+1 Defense! (S)", "default", 64, this, "atkbuy");
+    HpBuy = new Aspen::Graphics::UI::Text("+5 Health! (D)", "default", 64, this, "atkbuy");
+    AtkBuy->GetTransform()->SetPosition(100, 100);
+    DefBuy->GetTransform()->SetPosition(100, 100);
+    HpBuy->GetTransform()->SetPosition(100, 100);
   }
 
   void OnUpdate()
@@ -265,15 +287,8 @@ class Score1 : public GameState
     title = new Aspen::Graphics::UI::Text("WWWWWWWW", "default", 64, this, "Title");
     title->GetTransform()->SetPosition(127,339);
     AddChild(title);
-  }
-
-  void OnUpdate()
-  {
     title->SetText(std::to_string(Score));
-
-
   }
-
 };
 
 
@@ -306,10 +321,7 @@ int main(int argc, char **argv)
   engine.FindChildOfType<GameStateManager>()->LoadState<MainMenu>(true);
  // engine.FindChildOfType<GameStateManager>()->LoadState<Game>(false);
 
-if (timer <= 0)
-{
-  return 0;
-}
+
 
   while (engine)
     engine();
