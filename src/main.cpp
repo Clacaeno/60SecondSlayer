@@ -22,7 +22,18 @@ void ChangeScene(Aspen::Graphics::UI::Button *button, std::string scene, GameSta
 {
   gsm->SetCurrentState(scene);
 }
+    int pHp = 10;
+    int pMaxHP = 10;
+    int pSpeed = 2;
+    int pAttack = 4;
+    int pDefense = 0;
+    int pGold = 100000000;
 
+    int mHp = 5;
+    int mMaxHP = 5;
+    int mSpeed = 1;
+    int mAttack = 3;
+    int mDefense = 0;
 
     float charPosX = 543.0f;
     float charPosY = 1684.0f;
@@ -52,12 +63,7 @@ class BackGround : public Object
 };
 class Player : public Object
 {
-    int Hp;
-    int MaxHP;
-    int Speed;
-    int Attack;
-    int Defense;
-    int Gold;
+    
   Aspen::Graphics::Animation *RogueIdle;
   Aspen::Graphics::Animation *RogueStab;
 
@@ -77,22 +83,21 @@ class Player : public Object
 
     void OnUpdate()
     {
+      
     RogueStab->Deactivate();
     RogueIdle->Activate();
-    if(Aspen::Input::KeyHeld(SDLK_SPACE))
+    if(Aspen::Input::KeyPressed(SDLK_a))
     {
       RogueIdle->Deactivate();
       RogueStab->Activate();
+      mHp -= (pAttack - mDefense);
+      pHp -= (mAttack - pDefense);
     }
     }
 };
 class Slop : public Object
 {
-    int Hp;
-    int MaxHP;
-    int Speed;
-    int Attack;
-    int Defense;
+
   Aspen::Graphics::Animation *SlopBounce;
   Aspen::Graphics::Animation *SlopHurt;
 
@@ -116,7 +121,7 @@ class Slop : public Object
   {
     SlopBounce->Activate();
     SlopHurt->Deactivate();
-    if(Aspen::Input::KeyHeld(SDLK_SPACE))
+    if(Aspen::Input::KeyPressed(SDLK_SPACE))
     {
       SlopBounce->Deactivate();
       SlopHurt->Activate();
@@ -158,20 +163,29 @@ class MainMenu : public GameState
     double time;
     
   Aspen::Graphics::UI::Text *title;
+  Aspen::Graphics::UI::Text *title2;
   Aspen::Graphics::Animation *sprite; 
 
 
   public:
   MainMenu(Object *parent = nullptr, std::string name = "Mainmenu") : GameState(parent, name)
-  { 
+  {
     CreateChild<BackGround>();
     CreateChild<Player>();
     CreateChild<Slop>();
 
+    title = new Aspen::Graphics::UI::Text("WWWWWWWW", "default", 64, this, "Title");
+    title2 = new Aspen::Graphics::UI::Text("WWWWWWWW", "default", 64, this, "Title");
+    title->GetTransform()->SetPosition(127,339);
+    title2->GetTransform()->SetPosition(846,438);
+    AddChild(title);
+    AddChild(title2);
   }
 
   void OnUpdate()
   {
+    title->SetText(std::to_string(pHp) + " / " + std::to_string(pMaxHP));
+    title2->SetText(std::to_string(mHp) + " / " + std::to_string(mMaxHP));
   }
 
 };
