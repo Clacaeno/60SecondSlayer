@@ -11,6 +11,7 @@
 #include "GameState.hpp"
 #include "Debug.hpp"
 #include <iostream>
+#include <cmath>
 
 using Aspen::Engine::Engine;
 using Aspen::GameState::GameState;
@@ -22,6 +23,7 @@ void ChangeScene(Aspen::Graphics::UI::Button *button, std::string scene, GameSta
 {
   gsm->SetCurrentState(scene);
 }
+<<<<<<< Updated upstream
     int pHp = 10;
     int pMaxHP = 10;
     int pSpeed = 2;
@@ -34,6 +36,21 @@ void ChangeScene(Aspen::Graphics::UI::Button *button, std::string scene, GameSta
     int mSpeed = 1;
     int mAttack = 3;
     int mDefense = 0;
+=======
+    int eHp = 7;
+    int eMaxHP = 7;
+    int eSpeed = 2;
+    int eAttack = 3;
+    int eDefense = 0;
+
+    int pHp = 20;
+    int pMaxHP = 20;
+    int pSpeed = 4;
+    int pAttack = 5;
+    int pDefense = 2;
+    int pRestoration = 2;
+    int Gold = 0;
+>>>>>>> Stashed changes
 
     float charPosX = 543.0f;
     float charPosY = 1684.0f;
@@ -44,26 +61,38 @@ void ChangeScene(Aspen::Graphics::UI::Button *button, std::string scene, GameSta
     float bgPosX = 490.0f;
     float bgPosY = 360.0f;
 
+    float timerX = 474.0f;
+    float timerY = 42.0f;
+
+    float timer = 60;
+
 class BackGround : public Object
 {
     Aspen::Graphics::Animation *BG;
-
+    Aspen::Graphics::UI::Text *timertext;
     public:
     BackGround(Object *parent = nullptr, std::string name = "BG") : Object(parent, name)
     {
     BG = new Aspen::Graphics::Animation(new Aspen::Graphics::UniformSpritesheet("./resources/BG.png", 980, 720 , 1, nullptr, "BG"));
     BG->GetTransform()->SetPosition(bgPosX,bgPosY);
     BG->GetTransform()->SetScale(1,1);
+    timertext = new Aspen::Graphics::UI::Text("Hello", "default", 90);
+    timertext->GetTransform()->SetPosition(timerX, timerY);
     AddChild(BG);
+    AddChild(timertext);
     }
-
     void OnUpdate()
     {
+      timer -= Aspen::Engine::Engine::Get()->FindChildOfType<Aspen::Time::Time>()->DeltaTime();
+      timertext->SetText(std::to_string(int(std::ceil(timer))));
     }
 };
 class Player : public Object
 {
+<<<<<<< Updated upstream
     
+=======
+>>>>>>> Stashed changes
   Aspen::Graphics::Animation *RogueIdle;
   Aspen::Graphics::Animation *RogueStab;
 
@@ -90,14 +119,22 @@ class Player : public Object
     {
       RogueIdle->Deactivate();
       RogueStab->Activate();
+<<<<<<< Updated upstream
       mHp -= (pAttack - mDefense);
       pHp -= (mAttack - pDefense);
+=======
+      eHp -= pAttack - eDefense;
+>>>>>>> Stashed changes
     }
     }
 };
 class Slop : public Object
 {
+<<<<<<< Updated upstream
 
+=======
+   
+>>>>>>> Stashed changes
   Aspen::Graphics::Animation *SlopBounce;
   Aspen::Graphics::Animation *SlopHurt;
 
@@ -121,7 +158,11 @@ class Slop : public Object
   {
     SlopBounce->Activate();
     SlopHurt->Deactivate();
+<<<<<<< Updated upstream
     if(Aspen::Input::KeyPressed(SDLK_SPACE))
+=======
+    if(Aspen::Input::KeyPressed(SDLK_a))
+>>>>>>> Stashed changes
     {
       SlopBounce->Deactivate();
       SlopHurt->Activate();
@@ -132,28 +173,33 @@ class Slop : public Object
 
 class StoreOwner : public Object
 {
-  Aspen::Graphics::Animation *anim;
+  Aspen::Graphics::Sprite *sprite;
+  Aspen::Graphics::Animation *Shopkeep;
 
     public:
     StoreOwner(Object *parent = nullptr, std::string name = "Store Owner") : Object(parent, name)
     {
-    anim = new Aspen::Graphics::Animation(new Aspen::Graphics::UniformSpritesheet("./resources/Rogue.png", 960, 768 , 1, nullptr, "RogueIdle"));
-    AddChild(anim);
+    Shopkeep = new Aspen::Graphics::Animation(new Aspen::Graphics::UniformSpritesheet("./resources/ShopKeeper.png", 64, 64, 16, nullptr, "SlopBounce"));
+    sprite = new Aspen::Graphics::Sprite("./resources/Rogue.png", nullptr, "RogueIdle");
+    AddChild(sprite);
+    AddChild(Shopkeep);
     }
-
     void OnUpdate()
     {
-    if(Aspen::Input::KeyHeld(SDLK_a))
+    if(Aspen::Input::KeyPressed(SDLK_a) && Gold >= 2)
     {
-
+      pAttack ++;
+      Gold -= 3;
     }
-    if(Aspen::Input::KeyHeld(SDLK_s))
+    if(Aspen::Input::KeyPressed(SDLK_s) && Gold >= 1)
     {
-        
+      pDefense++;
+      Gold -= 1;
     }
-    if(Aspen::Input::KeyHeld(SDLK_d))
+    if(Aspen::Input::KeyPressed(SDLK_d) && Gold >= 3)
     {
-        
+      pRestoration++;
+      Gold -= 2;
     }
     }
 };
@@ -220,6 +266,11 @@ int main(int argc, char **argv)
 
   engine.FindChildOfType<GameStateManager>()->LoadState<MainMenu>(true);
  // engine.FindChildOfType<GameStateManager>()->LoadState<Game>(false);
+
+if (timer <= 0)
+{
+  return 0;
+}
 
   while (engine)
     engine();
